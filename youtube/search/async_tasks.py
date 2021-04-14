@@ -1,3 +1,5 @@
+
+from datetime import datetime
 from .constants import *
 from googleapiclient.discovery import build
 from .models import SearchDetail
@@ -5,9 +7,15 @@ from .models import SearchDetail
 
 def fill_data_from_youtube():
 
-    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
-    search_response = youtube.search().list(q=QUERY, part='id,snippet', maxResults=20, order='date',
-                                            publishedAfter='2010-01-01T00:00:00Z').execute()
+    try:
+        publish_datetime = get_publishing_data_after()
+        youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
+        search_response = youtube.search().list(q=QUERY, part='id,snippet', maxResults=100, order='date',
+                                                publishedAfter=publish_datetime).execute()
+    except Exception as e:
+        print(e)
+
+        return
 
     for item in search_response['items']:
         datetime = item['snippet']['publishedAt']
@@ -16,6 +24,21 @@ def fill_data_from_youtube():
         thumbnail = item['snippet']['thumbnails']['default']['url']
 
         obj, created = SearchDetail.objects.update_or_create(
-            title=title, thumbnail=thumbnail,
+            title=title, thumbnail=thumbnail, description=description,
             defaults={'datetime': datetime, 'description': description}
         )
+
+        print(obj)
+        print(created)
+
+
+def get_publishing_data_after():
+    publish_datetime = '2015-01-01T00:00:00Z'
+
+    latest_key = SearchDetail.objects.all().order_by('-datetime')
+
+    if latest_key:
+        publish_datetime = latest_key[0].datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    return publish_datetime
+
