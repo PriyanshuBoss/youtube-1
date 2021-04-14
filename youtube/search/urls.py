@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.urls import path
-from .views import search, fetch_data
+from .views import SearchView, FetchView
 
 urlpatterns = [
-    path('search', search, name="search_video_list"),
-    path('fetch_data', fetch_data, name="fetch_data"),
+    path('search', SearchView.as_view(), name="search_video_list"),
+    path('fetch_data', FetchView.as_view(), name="fetch_data"),
 
 ]
