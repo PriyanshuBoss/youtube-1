@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import status as status_codes
@@ -12,12 +13,13 @@ from .utility import pagination
 class SearchView(APIView):
 
     def get(self, request, *args, **kwargs):
-        title = request.GET.get('title')
-        description = request.GET.get('description')
+        title = request.GET.get('title', '')
+        description = request.GET.get('description', '')
 
         page = request.GET.get('page', 1)
 
-        search_filter = SearchDetail.objects.filter(title=title, description=description).order_by('-datetime')
+        search_filter = SearchDetail.objects.filter(Q(title__icontains=title) |
+                                                    Q(description__icontains=description)).order_by('-datetime')
 
         search_filter = pagination(search_filter, page_number=page, paginate_by=10)
 
