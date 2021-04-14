@@ -34,8 +34,6 @@ class SearchView(APIView):
 
         return JsonResponse({'search_list': search_list}, status=status_codes.HTTP_200_OK)
 
-
-
     def get_query_filter(self, search_query):
 
         q = self.process_query(search_query)
@@ -43,7 +41,8 @@ class SearchView(APIView):
 
         return search_filter
 
-    def process_query(self, search_string):
+    @staticmethod
+    def process_query(search_string):
         q = None
 
         for word in search_string.split():
@@ -51,6 +50,7 @@ class SearchView(APIView):
             q = (q_aux & q) if bool(q) else q_aux
 
         return q
+
 
 class FetchView(APIView):
 
