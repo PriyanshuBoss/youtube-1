@@ -52,7 +52,7 @@ def fill_data_from_youtube():
         try:
             publish_datetime = get_publishing_data_after()
             youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=developer_key)
-            api_response = youtube.search().list(q=QUERY, part='id,snippet', maxResults=1, order='date',
+            api_response = youtube.search().list(q=QUERY, part='id,snippet', maxResults=MAX_RESULTS, order='date',
                                                  publishedAfter=publish_datetime).execute()
             break
 
