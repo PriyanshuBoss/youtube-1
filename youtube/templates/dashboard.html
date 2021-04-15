@@ -203,9 +203,19 @@ a.article-title:hover {
 
 </main>
 
-
 <br/>
 
+<nav aria-label="Page navigation example" style="margin-left:500px">
+  <ul class="pagination">
+    <li class="page-item"><a class="page-link" href="?page={{page|add:-1}}">Previous</a></li>
+    <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+    <li class="page-item"><a class="page-link" href="?page=2">2</a></li>
+    <li class="page-item"><a class="page-link" href="?page=3">3</a></li>
+    <li class="page-item"><a class="page-link" href="?page={{page|add:1}}">Next</a></li>
+  </ul>
+</nav>
+
+<br/>
 </body>
 
 
