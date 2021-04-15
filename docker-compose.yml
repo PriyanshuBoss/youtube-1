@@ -1,16 +1,24 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
   web:
     build: ./youtube
-    command: python manage.py runserver 0.0.0.0:8000
+    command: sh -c "python manage.py makemigrations && python manage.py migrate &&  python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - ./youtube/:/usr/src/app/
+      - .:/youtube
     ports:
       - 8000:8000
     environment:
       - DEBUG=1
     depends_on:
+      - db
       - redis
   redis:
     image: redis:alpine
@@ -18,17 +26,24 @@ services:
     build: ./youtube
     command: celery -A youtube worker -l info
     volumes:
-      - ./youtube/:/usr/src/app/
+      - .:/youtube
     environment:
       - DEBUG=1
     depends_on:
+      - db
+      - web
       - redis
   celery-beat:
     build: ./youtube
     command: celery -A youtube beat -l info
     volumes:
-      - ./youtube/:/usr/src/app/
+      - .:/youtube
     environment:
       - DEBUG=1
     depends_on:
+      - db
+      - web
       - redis
+
+volumes:
+  postgres_data:
