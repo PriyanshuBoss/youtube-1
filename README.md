@@ -1,6 +1,6 @@
 # youtube-1
 ## System Requirements
-### install docker using ref: https://www.docker.com/products/docker-desktop
+### Install docker using ref: https://www.docker.com/products/docker-desktop
 
 ### Steps to run
 * clone the repository using command `git clone https://github.com/PriyanshuBoss/youtube-1.git`
