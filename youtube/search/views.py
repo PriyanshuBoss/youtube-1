@@ -16,6 +16,8 @@ class SearchView(APIView):
 
     def get(self, request, *args, **kwargs):
 
+        """function returns search results based on title and descritpion it also search partial strings"""
+
         search_query = request.GET.get('search_query', None)
 
         if not search_query:
@@ -38,6 +40,7 @@ class SearchView(APIView):
 
     def get_query_filter(self, search_query):
 
+        """return search filter in descending order of published at"""
         q = self.process_query(search_query)
         search_filter = SearchDetail.objects.filter(q).order_by('-published_at')
 
@@ -45,6 +48,8 @@ class SearchView(APIView):
 
     @staticmethod
     def process_query(search_string):
+
+        """process a condition for partial string matching"""
         q = None
 
         for word in search_string.split():
@@ -57,6 +62,9 @@ class SearchView(APIView):
 class FetchView(APIView):
 
     def get(self, request, *args, **kwargs):
+
+        """return data in paginated format which is stored in db"""
+
         page = request.GET.get('page', 1)
 
         data_filter = SearchDetail.objects.all().order_by('-published_at')
@@ -75,6 +83,9 @@ class SetApiKey(APIView):
         return super(SetApiKey, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+
+        """set a api key to be used to hit youtube apis also.
+        This gives the support to add multiple keys if quota of one key is over"""
 
         api_key = request.POST.get('api_key')
 

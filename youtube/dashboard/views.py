@@ -9,6 +9,9 @@ from search.utility import pagination,NumberUtilities,get_paginated_queryset_wit
 
 
 def dashboard(request):
+
+    """this function returns the stored videos in form of dashboard in paginated format"""
+
     page = request.GET.get('page', 1)
 
     page = NumberUtilities.get_integer_from_string(page)

@@ -22,17 +22,23 @@ def get_api_fail_reason(error):
 
 
 def get_publishing_data_after():
+    """returns the published datetime after the youtube video gives data"""
+
     publish_datetime = '2015-01-01T00:00:00Z'
 
     latest_key = SearchDetail.objects.all().order_by('-published_at')[:1]
 
     if latest_key:
+        # return the maximum datetime value from db in order to get the new data
         publish_datetime = latest_key[0].published_at.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     return publish_datetime
 
 
 def process_api_response(api_response):
+
+    """process the response of api and save it in db"""
+
     if not api_response:
         return
 
@@ -46,8 +52,11 @@ def process_api_response(api_response):
 
 @app.task
 def fill_data_from_youtube():
+    """This functions hits api after 10 seconds and fill the data according to the new videos uploaded"""
+
     api_response = {}
 
+    # get the valid developer key from db whose quota is not expired
     developer_filter = DeveloperKeys.objects.filter(quota_expired=False).order_by('-id')
 
     for instance in developer_filter:
@@ -66,6 +75,7 @@ def fill_data_from_youtube():
             error_reason = get_api_fail_reason(e.args)
 
             if error_reason == "quotaExceeded":
+                # set the quota expired at true if the quota exceeded
                 instance.quota_expired = True
                 instance.save()
 
