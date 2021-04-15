@@ -18,24 +18,18 @@ def fill_data_from_youtube():
         return
 
     for item in search_response['items']:
-        datetime = item['snippet']['publishedAt']
+        published_at = item['snippet']['publishedAt']
         description = item['snippet']['description']
         title = item['snippet']['title']
         thumbnail = item['snippet']['thumbnails']['default']['url']
+        instance = SearchDetail.create_instance(title, thumbnail, description, published_at)
 
-        obj, created = SearchDetail.objects.update_or_create(
-            title=title, thumbnail=thumbnail, description=description,
-            defaults={'datetime': datetime, 'description': description}
-        )
-
-        print(obj)
-        print(created)
 
 
 def get_publishing_data_after():
     publish_datetime = '2015-01-01T00:00:00Z'
 
-    latest_key = SearchDetail.objects.all().order_by('-datetime')
+    latest_key = SearchDetail.objects.all().order_by('-datetime')[:1]
 
     if latest_key:
         publish_datetime = latest_key[0].datetime.strftime('%Y-%m-%dT%H:%M:%SZ')

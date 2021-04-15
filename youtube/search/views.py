@@ -37,7 +37,7 @@ class SearchView(APIView):
     def get_query_filter(self, search_query):
 
         q = self.process_query(search_query)
-        search_filter = SearchDetail.objects.filter(q).order_by('-datetime')
+        search_filter = SearchDetail.objects.filter(q).order_by('-published_at')
 
         return search_filter
 
@@ -57,7 +57,7 @@ class FetchView(APIView):
     def get(self, request, *args, **kwargs):
         page = request.GET.get('page', 1)
 
-        data_filter = SearchDetail.objects.all().order_by('-datetime')
+        data_filter = SearchDetail.objects.all().order_by('-published_at')
 
         data_filter = pagination(data_filter, page_number=page, paginate_by=10)
 

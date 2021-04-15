@@ -6,4 +6,4 @@ class SearchDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SearchDetail
-        fields = ('title', 'description', 'thumbnail', 'datetime')
+        fields = ('title', 'description', 'thumbnail', 'published_at')
