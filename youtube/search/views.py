@@ -1,6 +1,8 @@
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status as status_codes
 # Create your views here.
 from rest_framework.views import APIView
@@ -64,3 +66,22 @@ class FetchView(APIView):
         search_list = SearchDetailSerializer(data_filter, many=True).data
 
         return JsonResponse({'search_list': search_list}, status=status_codes.HTTP_200_OK)
+
+
+class SetApiKey(APIView):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(SetApiKey, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+
+        api_key = request.POST.get('api_key')
+
+        if not api_key:
+            return JsonResponse({'success': False, 'error_message': "Invalid post param"},
+                                status=status_codes.HTTP_400_BAD_REQUEST)
+
+        DeveloperKeys.create_instance(api_key)
+
+        return JsonResponse({'success': True})
