@@ -3,4 +3,4 @@ YOUTUBE_API_VERSION = "v3"
 
 QUERY = "football"
 
-MAX_RESULTS = 1
+MAX_RESULTS = 10

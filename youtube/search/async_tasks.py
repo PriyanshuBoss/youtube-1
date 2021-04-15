@@ -1,8 +1,11 @@
 from datetime import datetime
+
 from .constants import *
 from googleapiclient.discovery import build
 from .models import SearchDetail, DeveloperKeys
 import json
+
+from youtube.celery import app
 
 
 def get_api_fail_reason(error):
@@ -41,6 +44,7 @@ def process_api_response(api_response):
         instance = SearchDetail.create_instance(title, thumbnail, description, published_at)
 
 
+@app.task
 def fill_data_from_youtube():
     api_response = {}
 
@@ -54,6 +58,7 @@ def fill_data_from_youtube():
             youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=developer_key)
             api_response = youtube.search().list(q=QUERY, part='id,snippet', maxResults=MAX_RESULTS, order='date',
                                                  publishedAfter=publish_datetime).execute()
+            print(api_response)
             break
 
         except Exception as e:
