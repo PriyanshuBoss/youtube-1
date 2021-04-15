@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./youtube
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./youtube/:/usr/src/app/
+    ports:
+      - 8000:8000
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-+xosp)rz7!$e$n$$%vfegt-da+e4%r^5%wrx=d431(!a$2vs=0
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
+  redis:
+    image: redis:alpine
+  celery:
+    build: ./youtube
+    command: celery -A youtube worker -l info
+    volumes:
+      - ./youtube/:/usr/src/app/
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-+xosp)rz7!$e$n$$%vfegt-da+e4%r^5%wrx=d431(!a$2vs=0
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
+  celery-beat:
+    build: ./youtube
+    command: celery -A youtube beat -l info
+    volumes:
+      - ./youtube/:/usr/src/app/
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=django-insecure-+xosp)rz7!$e$n$$%vfegt-da+e4%r^5%wrx=d431(!a$2vs=0
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
