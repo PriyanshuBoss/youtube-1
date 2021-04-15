@@ -25,14 +25,12 @@ def fill_data_from_youtube():
         instance = SearchDetail.create_instance(title, thumbnail, description, published_at)
 
 
-
 def get_publishing_data_after():
     publish_datetime = '2015-01-01T00:00:00Z'
 
-    latest_key = SearchDetail.objects.all().order_by('-datetime')[:1]
+    latest_key = SearchDetail.objects.all().order_by('-published_at')[:1]
 
     if latest_key:
-        publish_datetime = latest_key[0].datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
+        publish_datetime = latest_key[0].published_at.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     return publish_datetime
-
